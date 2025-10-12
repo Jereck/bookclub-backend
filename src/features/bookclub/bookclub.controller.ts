@@ -10,11 +10,15 @@ export const getAllBookclubs = async (c: Context) => {
 }
 
 export const getBookclubById = async (c: Context) => {
-    const id = Number(c.req.param("id"))
-    const bookclub = await db.select().from(bookclubs).where(eq(bookclubs.id, id))
+    const id = c.req.param("id")
+    const bookclub = await db.query.bookclubs.findMany({
+        where: (bookclubs, { eq }) => eq(bookclubs.id, id),
+        with: {
+            usersToBookclubs: true
+        }
+    })
     if (!bookclub) return c.json({ error: "Not found" }, 404);
-    const members = await db.select().from(usersToBookclubs).where(eq(usersToBookclubs.bookclubId, id));
-    return c.json({ ...bookclub, members});
+    return c.json(bookclub );
 }
 
 export const createBookclub = async (c: Context) => {
@@ -40,7 +44,7 @@ export const createBookclub = async (c: Context) => {
 }
 
 export const updateBookclub = async (c: Context) => {
-    const id = Number(c.req.param("id"))
+    const id = c.req.param("id")
     const data = await c.req.json();
 
     const [updatedBookclub] = await db
@@ -58,7 +62,7 @@ export const updateBookclub = async (c: Context) => {
 }
 
 export const deleteBookclub = async (c: Context) => {
-    const id = Number(c.req.param("id"))
+    const id = c.req.param("id")
 
     const [deletedBookclub] = await db
         .delete(bookclubs)
@@ -71,9 +75,8 @@ export const deleteBookclub = async (c: Context) => {
 }
 
 export const joinBookclub = async (c: Context) => {
-//    const data = await c.req.json();
     const user = c.get("user");
-    const bookclubId = Number(c.req.param("id"))
+    const bookclubId = c.req.param("id")
 
     if (!user) return c.json({ message: "Not authorized" });
 
