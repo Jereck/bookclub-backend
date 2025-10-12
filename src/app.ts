@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { auth } from './utils/auth';
 import bookclubRoutes from './features/bookclub/bookclub.routes';
+import bookRoutes from './features/book/book.routes'
 
 const app = new Hono()
 
@@ -26,5 +27,6 @@ app.get('/', (c) => {
 })
 
 app.route('/api/bookclubs', bookclubRoutes)
+app.route('/api/books', bookRoutes)
 
 export default app;

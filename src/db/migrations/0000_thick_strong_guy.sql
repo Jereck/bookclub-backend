@@ -22,8 +22,13 @@ CREATE TABLE "bookclubs" (
 --> statement-breakpoint
 CREATE TABLE "books" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "books_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
-	"name" varchar(255) NOT NULL,
-	"isbn13" integer NOT NULL
+	"title" varchar(255) NOT NULL,
+	"authors" varchar(255),
+	"isbn13" varchar NOT NULL,
+	"coverImage" text,
+	"publishedYear" integer,
+	"description" text,
+	CONSTRAINT "books_isbn13_unique" UNIQUE("isbn13")
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
@@ -49,6 +54,13 @@ CREATE TABLE "user" (
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "user_to_books" (
+	"user_id" text NOT NULL,
+	"book_id" integer NOT NULL,
+	"added_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "user_to_books_user_id_book_id_pk" PRIMARY KEY("user_id","book_id")
+);
+--> statement-breakpoint
 CREATE TABLE "users_to_bookclubs" (
 	"user_id" text NOT NULL,
 	"bookclub_id" integer NOT NULL,
@@ -67,5 +79,7 @@ CREATE TABLE "verification" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_to_books" ADD CONSTRAINT "user_to_books_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_to_books" ADD CONSTRAINT "user_to_books_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_to_bookclubs" ADD CONSTRAINT "users_to_bookclubs_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_to_bookclubs" ADD CONSTRAINT "users_to_bookclubs_bookclub_id_bookclubs_id_fk" FOREIGN KEY ("bookclub_id") REFERENCES "public"."bookclubs"("id") ON DELETE no action ON UPDATE no action;

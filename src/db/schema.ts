@@ -71,9 +71,23 @@ export const verification = pgTable('verification', {
 
 export const books = pgTable("books", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 255 }).notNull(),
-  isbn13: integer().notNull(),
+  title: varchar({ length: 255 }).notNull(),
+  authors: varchar({ length: 255 }),
+  isbn13: varchar().notNull().unique(),
+  coverImage: text(),
+  publishedYear: integer(),
+  description: text()
 });
+
+export const userToBooks = pgTable(
+  'user_to_books',
+  {
+    userId: text("user_id").notNull().references(() => user.id),
+    bookId: integer("book_id").notNull().references(() => books.id),
+    addedAt: timestamp("added_at").defaultNow().notNull()
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.bookId] })]
+)
 
 export const bookclubs = pgTable("bookclubs", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
