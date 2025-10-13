@@ -127,6 +127,11 @@ export const userRelations = relations(user, ({ many }) => ({
   usersToBooks: many(usersToBooks)
 }))
 
+export const booksRelations = relations(books, ({ many }) => ({
+  usersToBooks: many(usersToBooks),
+  bookclubsToBooks: many(bookclubsToBooks),
+}));
+
 export const bookclubRelations = relations(bookclubs, ({ many, one }) => ({
   usersToBookclubs: many(usersToBookclubs),
   bookclubToBooks: many(bookclubsToBooks),

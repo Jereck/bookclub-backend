@@ -14,7 +14,11 @@ export const getBookclubById = async (c: Context) => {
     const bookclub = await db.query.bookclubs.findMany({
         where: (bookclubs, { eq }) => eq(bookclubs.id, id),
         with: {
-            usersToBookclubs: true
+            usersToBookclubs: {
+                with: {
+                    user: true
+                }
+            }
         }
     })
     if (!bookclub) return c.json({ error: "Not found" }, 404);
