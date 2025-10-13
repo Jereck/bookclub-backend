@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { createBookclub, deleteBookclub, getAllBookclubs, getBookclubById, joinBookclub, updateBookclub } from "./bookclub.controller";
+import { createBookclub, deleteBookclub, getAllBookclubs, getBookclubById, joinBookclub, setCurrentBook, updateBookclub } from "./bookclub.controller";
 import { type HonoEnv } from "../../types";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 
@@ -12,5 +12,6 @@ bookclubRoutes.get('/:id', getBookclubById)
 bookclubRoutes.put('/:id', updateBookclub)
 bookclubRoutes.delete('/:id', deleteBookclub)
 bookclubRoutes.post('/:id/join', joinBookclub)
+bookclubRoutes.put('/:id/set-book', setCurrentBook)
 
 export default bookclubRoutes;
