@@ -1,8 +1,8 @@
-import { Hono, type Context } from "hono";
+import { type Context } from "hono";
 import { db } from "../../db/db";
 import { bookclubs, usersToBookclubs } from "../../db/schema";
-import { eq, and } from "drizzle-orm";
-
+import { eq } from "drizzle-orm";
+import type { CreateBookclubInput } from "./bookclub.schema";
 
 export const getAllBookclubs = async (c: Context) => {
     const allClubs = await db.select().from(bookclubs);
