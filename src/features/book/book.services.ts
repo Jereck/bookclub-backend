@@ -20,5 +20,5 @@ export async function createBookInDb(data: {
     .values(data)
     .returning();
 
-  return newBook;
+  return newBook ?? null;
 }
