@@ -1,10 +1,10 @@
 import { db } from "../../db/db";
-import { books } from "../../db/schema";
+import { book } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
 export async function findBookByISBN(isbn: string) {
-  const [book] = await db.select().from(books).where(eq(books.isbn13, isbn));
-  return book || null;
+  const [foundBook] = await db.select().from(book).where(eq(book.isbn13, isbn));
+  return foundBook || null;
 }
 
 export async function createBookInDb(data: {
@@ -16,7 +16,7 @@ export async function createBookInDb(data: {
   description?: string | null;
 }) {
   const [newBook] = await db
-    .insert(books)
+    .insert(book)
     .values(data)
     .returning();
 

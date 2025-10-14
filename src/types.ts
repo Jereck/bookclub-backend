@@ -1,12 +1,12 @@
 import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
-import type { bookclubs, books } from './db/schema'
+import type { bookclub, book } from './db/schema'
 import type { auth } from "./utils/auth";
 
-export type Bookclub = InferSelectModel<typeof bookclubs>;
-export type Book = InferSelectModel<typeof books>;
+export type Bookclub = InferSelectModel<typeof bookclub>;
+export type Book = InferSelectModel<typeof book>;
 
-export type NewBookclub = InferInsertModel<typeof bookclubs>;
-export type NewBook = InferInsertModel<typeof books>;
+export type NewBookclub = InferInsertModel<typeof bookclub>;
+export type NewBook = InferInsertModel<typeof book>;
 
 export type HonoEnv = {
     Variables: {

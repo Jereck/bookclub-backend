@@ -1,5 +1,5 @@
 {
-  "id": "5b92b51e-0d6f-44a0-a9d6-3ffe6cd0427f",
+  "id": "2bf5eb1c-5805-46ff-9a8d-644a202ec3d8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -109,138 +109,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.bookclubs": {
-      "name": "bookclubs",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "current_book_id": {
-          "name": "current_book_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "bookclubs_current_book_id_books_id_fk": {
-          "name": "bookclubs_current_book_id_books_id_fk",
-          "tableFrom": "bookclubs",
-          "tableTo": "books",
-          "columnsFrom": [
-            "current_book_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.bookclub_to_books": {
-      "name": "bookclub_to_books",
-      "schema": "",
-      "columns": {
-        "bookclub_id": {
-          "name": "bookclub_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "book_id": {
-          "name": "book_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'reading'"
-        },
-        "started_at": {
-          "name": "started_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "finished_at": {
-          "name": "finished_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "bookclub_to_books_bookclub_id_bookclubs_id_fk": {
-          "name": "bookclub_to_books_bookclub_id_bookclubs_id_fk",
-          "tableFrom": "bookclub_to_books",
-          "tableTo": "bookclubs",
-          "columnsFrom": [
-            "bookclub_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "bookclub_to_books_book_id_books_id_fk": {
-          "name": "bookclub_to_books_book_id_books_id_fk",
-          "tableFrom": "bookclub_to_books",
-          "tableTo": "books",
-          "columnsFrom": [
-            "book_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "bookclub_to_books_bookclub_id_book_id_pk": {
-          "name": "bookclub_to_books_bookclub_id_book_id_pk",
-          "columns": [
-            "bookclub_id",
-            "book_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.books": {
-      "name": "books",
+    "public.book": {
+      "name": "book",
       "schema": "",
       "columns": {
         "id": {
@@ -297,14 +167,231 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "books_isbn13_unique": {
-          "name": "books_isbn13_unique",
+        "book_isbn13_unique": {
+          "name": "book_isbn13_unique",
           "nullsNotDistinct": false,
           "columns": [
             "isbn13"
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bookclub": {
+      "name": "bookclub",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_book_id": {
+          "name": "current_book_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookclub_current_book_id_book_id_fk": {
+          "name": "bookclub_current_book_id_book_id_fk",
+          "tableFrom": "bookclub",
+          "tableTo": "book",
+          "columnsFrom": [
+            "current_book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bookclub_book": {
+      "name": "bookclub_book",
+      "schema": "",
+      "columns": {
+        "bookclub_id": {
+          "name": "bookclub_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "book_id": {
+          "name": "book_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookclub_book_bookclub_id_bookclub_id_fk": {
+          "name": "bookclub_book_bookclub_id_bookclub_id_fk",
+          "tableFrom": "bookclub_book",
+          "tableTo": "bookclub",
+          "columnsFrom": [
+            "bookclub_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bookclub_book_book_id_book_id_fk": {
+          "name": "bookclub_book_book_id_book_id_fk",
+          "tableFrom": "bookclub_book",
+          "tableTo": "book",
+          "columnsFrom": [
+            "book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bookclub_book_bookclub_id_book_id_pk": {
+          "name": "bookclub_book_bookclub_id_book_id_pk",
+          "columns": [
+            "bookclub_id",
+            "book_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bookclub_user": {
+      "name": "bookclub_user",
+      "schema": "",
+      "columns": {
+        "bookclub_id": {
+          "name": "bookclub_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_owner": {
+          "name": "is_owner",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookclub_user_bookclub_id_bookclub_id_fk": {
+          "name": "bookclub_user_bookclub_id_bookclub_id_fk",
+          "tableFrom": "bookclub_user",
+          "tableTo": "bookclub",
+          "columnsFrom": [
+            "bookclub_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bookclub_user_user_id_user_id_fk": {
+          "name": "bookclub_user_user_id_user_id_fk",
+          "tableFrom": "bookclub_user",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bookclub_user_bookclub_id_user_id_pk": {
+          "name": "bookclub_user_bookclub_id_user_id_pk",
+          "columns": [
+            "bookclub_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.library": {
+      "name": "library",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "library_user_id_user_id_fk": {
+          "name": "library_user_id_user_id_fk",
+          "tableFrom": "library",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -451,147 +538,6 @@
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.users_to_bookclubs": {
-      "name": "users_to_bookclubs",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "bookclub_id": {
-          "name": "bookclub_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "is_owner": {
-          "name": "is_owner",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "users_to_bookclubs_user_id_user_id_fk": {
-          "name": "users_to_bookclubs_user_id_user_id_fk",
-          "tableFrom": "users_to_bookclubs",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "users_to_bookclubs_bookclub_id_bookclubs_id_fk": {
-          "name": "users_to_bookclubs_bookclub_id_bookclubs_id_fk",
-          "tableFrom": "users_to_bookclubs",
-          "tableTo": "bookclubs",
-          "columnsFrom": [
-            "bookclub_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "users_to_bookclubs_user_id_bookclub_id_pk": {
-          "name": "users_to_bookclubs_user_id_bookclub_id_pk",
-          "columns": [
-            "user_id",
-            "bookclub_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.user_to_books": {
-      "name": "user_to_books",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "book_id": {
-          "name": "book_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'want_to_read'"
-        },
-        "added_at": {
-          "name": "added_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_to_books_user_id_user_id_fk": {
-          "name": "user_to_books_user_id_user_id_fk",
-          "tableFrom": "user_to_books",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_to_books_book_id_books_id_fk": {
-          "name": "user_to_books_book_id_books_id_fk",
-          "tableFrom": "user_to_books",
-          "tableTo": "books",
-          "columnsFrom": [
-            "book_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "user_to_books_user_id_book_id_pk": {
-          "name": "user_to_books_user_id_book_id_pk",
-          "columns": [
-            "user_id",
-            "book_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

@@ -1,13 +1,18 @@
 import { type Context } from "hono";
 import { db } from "../../db/db";
-import { bookclubs, usersToBookclubs } from "../../db/schema";
+import { bookclub, bookclubUser } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { createBookInDb, findBookByISBN } from "../book/book.services";
 
 export const getAllBookclubs = async (c: Context) => {
-  const allClubs = await db.query.bookclubs.findMany({
+  const allClubs = await db.query.bookclub.findMany({
     with: {
-      usersToBookclubs: true
+      members: {
+        with: {
+          user: true
+        },
+      },
+      currentBook: true
     }
   })
   return c.json(allClubs);
@@ -15,11 +20,11 @@ export const getAllBookclubs = async (c: Context) => {
 
 export const getBookclubById = async (c: Context) => {
   const id = c.req.param("id")
-  const bookclub = await db.query.bookclubs.findFirst({
-    where: (bookclubs, { eq }) => eq(bookclubs.id, id),
+  const bookclub = await db.query.bookclub.findFirst({
+    where: (bookclub, { eq }) => eq(bookclub.id, id),
     with: {
       currentBook: true,
-      usersToBookclubs: {
+      members: {
         with: {
           user: true
         }
@@ -33,7 +38,7 @@ export const getBookclubById = async (c: Context) => {
     name: bookclub.name,
     description: bookclub.description,
     currentBook: bookclub.currentBook,
-    members: bookclub.usersToBookclubs.map((m) => ({
+    members: bookclub.members.map((m) => ({
       id: m.user.id,
       name: m.user.name,
       email: m.user.email,
@@ -49,20 +54,20 @@ export const createBookclub = async (c: Context) => {
 
   if (!user) return c.json({ error: "Unauthorized" });
 
-  const [bookclub] = await db
-    .insert(bookclubs)
+  const [newClub] = await db
+    .insert(bookclub)
     .values({ name: data.name, description: data.description })
     .returning();
 
-  if (!bookclub) return c.json({ message: "No bookclub" })
+  if (!newClub) return c.json({ message: "No bookclub" })
 
-  await db.insert(usersToBookclubs)
+  await db.insert(bookclubUser)
     .values({
       userId: user.id,
-      bookclubId: bookclub.id,
+      bookclubId: newClub.id,
       isOwner: true
     })
-  return c.json({ message: "bookclub created", bookclub }, 201);
+  return c.json({ message: "bookclub created", newClub }, 201);
 }
 
 export const updateBookclub = async (c: Context) => {
@@ -70,19 +75,19 @@ export const updateBookclub = async (c: Context) => {
   const id = c.req.param("id")
   const data = await c.req.json();
 
-  const ownership = await db.query.usersToBookclubs.findFirst({
+  const ownership = await db.query.bookclubUser.findFirst({
     where: (utb, { and, eq }) => and(eq(utb.userId, user.id), eq(utb.bookclubId, id), eq(utb.isOwner, true))
   });
 
   if (!ownership) return c.json({ error: "Forbidden" }, 403);
 
   const [updatedBookclub] = await db
-    .update(bookclubs)
+    .update(bookclub)
     .set({
       name: data.name,
       description: data.description
     })
-    .where(eq(bookclubs.id, id))
+    .where(eq(bookclub.id, id))
     .returning();
 
   if (!updatedBookclub) return c.json({ error: "Not found" }, 404);
@@ -94,8 +99,8 @@ export const deleteBookclub = async (c: Context) => {
   const id = c.req.param("id")
 
   const [deletedBookclub] = await db
-    .delete(bookclubs)
-    .where(eq(bookclubs.id, id))
+    .delete(bookclub)
+    .where(eq(bookclub.id, id))
     .returning();
 
   if (!deletedBookclub) return c.json({ error: "Not found" }, 404);
@@ -109,7 +114,7 @@ export const joinBookclub = async (c: Context) => {
 
   if (!user) return c.json({ message: "Not authorized" });
 
-  const existing = await db.query.usersToBookclubs.findFirst({
+  const existing = await db.query.bookclubUser.findFirst({
     where: (utb, { and, eq }) => and(
       eq(utb.bookclubId, bookclubId),
       eq(utb.userId, user.id)
@@ -118,7 +123,7 @@ export const joinBookclub = async (c: Context) => {
 
   if (existing) return c.json({ message: "Already a member" }, 400);
 
-  const [membership] = await db.insert(usersToBookclubs).values({
+  const [membership] = await db.insert(bookclubUser).values({
     userId: user.id,
     bookclubId,
     isOwner: false
@@ -133,7 +138,7 @@ export const leaveBookclub = async (c: Context) => {
 
   if (!user) return c.json({ message: "Not authorized" });
 
-  const existing = await db.query.usersToBookclubs.findFirst({
+  const existing = await db.query.bookclubUser.findFirst({
     where: (utb, { and, eq }) => and(
       eq(utb.bookclubId, bookclubId),
       eq(utb.userId, user.id)
@@ -143,12 +148,12 @@ export const leaveBookclub = async (c: Context) => {
   if (!existing) return c.json({ message: "You are not a member of this club" });
 
   if (existing.isOwner) {
-    await db.delete(bookclubs).where(eq(bookclubs.id, bookclubId))
+    await db.delete(bookclub).where(eq(bookclub.id, bookclubId))
     return c.json({ message: "Bookclub deleted" })
   }
 
-  const [leftMembership] = await db.delete(usersToBookclubs)
-    .where(eq(usersToBookclubs.userId, user.id))
+  const [leftMembership] = await db.delete(bookclubUser)
+    .where(eq(bookclubUser.userId, user.id))
     .returning();
 
   if (!leftMembership) return c.json({ error: "Something went wrong leaving the club" }, 404);
@@ -163,7 +168,7 @@ export const setCurrentBook = async (c: Context) => {
 
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
-  const ownership = await db.query.usersToBookclubs.findFirst({
+  const ownership = await db.query.bookclubUser.findFirst({
     where: (utb, { and, eq }) =>
       and(eq(utb.userId, user.id), eq(utb.bookclubId, bookclubId), eq(utb.isOwner, true)),
   });
@@ -183,9 +188,9 @@ export const setCurrentBook = async (c: Context) => {
   }
 
   const [updatedBookclub] = await db
-    .update(bookclubs)
+    .update(bookclub)
     .set({ currentBookId: book?.id })
-    .where(eq(bookclubs.id, bookclubId))
+    .where(eq(bookclub.id, bookclubId))
     .returning();
 
   if (!updatedBookclub) return c.json({ error: "Not found" }, 404);
