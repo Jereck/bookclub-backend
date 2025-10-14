@@ -48,7 +48,14 @@ CREATE TABLE "bookclub_user" (
 --> statement-breakpoint
 CREATE TABLE "library" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" text NOT NULL
+	"user_id" text,
+	"bookclub_id" text
+);
+--> statement-breakpoint
+CREATE TABLE "library_book" (
+	"library_id" text NOT NULL,
+	"book_id" text NOT NULL,
+	CONSTRAINT "library_book_library_id_book_id_pk" PRIMARY KEY("library_id","book_id")
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
@@ -90,4 +97,7 @@ ALTER TABLE "bookclub_book" ADD CONSTRAINT "bookclub_book_book_id_book_id_fk" FO
 ALTER TABLE "bookclub_user" ADD CONSTRAINT "bookclub_user_bookclub_id_bookclub_id_fk" FOREIGN KEY ("bookclub_id") REFERENCES "public"."bookclub"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bookclub_user" ADD CONSTRAINT "bookclub_user_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "library" ADD CONSTRAINT "library_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "library" ADD CONSTRAINT "library_bookclub_id_bookclub_id_fk" FOREIGN KEY ("bookclub_id") REFERENCES "public"."bookclub"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "library_book" ADD CONSTRAINT "library_book_library_id_library_id_fk" FOREIGN KEY ("library_id") REFERENCES "public"."library"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "library_book" ADD CONSTRAINT "library_book_book_id_book_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."book"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

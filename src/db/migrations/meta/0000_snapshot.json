@@ -1,5 +1,5 @@
 {
-  "id": "2bf5eb1c-5805-46ff-9a8d-644a202ec3d8",
+  "id": "c4585edb-09f6-49d0-add9-97ad5a39f797",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -371,7 +371,13 @@
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "bookclub_id": {
+          "name": "bookclub_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -388,9 +394,82 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "library_bookclub_id_bookclub_id_fk": {
+          "name": "library_bookclub_id_bookclub_id_fk",
+          "tableFrom": "library",
+          "tableTo": "bookclub",
+          "columnsFrom": [
+            "bookclub_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.library_book": {
+      "name": "library_book",
+      "schema": "",
+      "columns": {
+        "library_id": {
+          "name": "library_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "book_id": {
+          "name": "book_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "library_book_library_id_library_id_fk": {
+          "name": "library_book_library_id_library_id_fk",
+          "tableFrom": "library_book",
+          "tableTo": "library",
+          "columnsFrom": [
+            "library_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "library_book_book_id_book_id_fk": {
+          "name": "library_book_book_id_book_id_fk",
+          "tableFrom": "library_book",
+          "tableTo": "book",
+          "columnsFrom": [
+            "book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "library_book_library_id_book_id_pk": {
+          "name": "library_book_library_id_book_id_pk",
+          "columns": [
+            "library_id",
+            "book_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

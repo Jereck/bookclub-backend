@@ -66,7 +66,7 @@ export const setCurrentBook = async (c: Context) => {
   const { isbn, bookData } = await c.req.json();
 
   if (!user) return c.json({ error: "Unauthorized" }, 401);
-
+  
   const updatedBookclub = await setBook(user.id, bookclubId, isbn, bookData);
 
   if (!updatedBookclub) return c.json({ message: "Something went wrong with updating current book" })

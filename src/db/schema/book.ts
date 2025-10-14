@@ -1,8 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, varchar, integer, timestamp } from "drizzle-orm/pg-core";
-import user from "./user";
 import bookclub from "./bookclub";
-import library from "./library";
+import libraryBooks from "./libraryBook";
 
 const book = pgTable("book", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -16,8 +15,7 @@ const book = pgTable("book", {
 });
 
 export const booksRelations = relations(book, ({ many }) => ({
-  libraries: many(library),
-  bookclubs: many(bookclub),
+  libraries: many(libraryBooks),
 }));
 
 export default book

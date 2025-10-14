@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import { auth } from './utils/auth';
 import bookclubRoutes from './features/bookclub/bookclub.routes';
 import bookRoutes from './features/book/book.routes'
+import libraryRoutes from './features/library/library.routes'
 
 const app = new Hono()
 
@@ -28,6 +29,7 @@ app.get('/', (c) => {
 
 app.route('/api/bookclubs', bookclubRoutes)
 app.route('/api/books', bookRoutes)
+app.route('/api/library', libraryRoutes)
 
 export type AppType = typeof router;
 export default app;
