@@ -2,10 +2,11 @@
 import type { Context } from "hono";
 import { findBookByISBN, createBookInDb } from './book.services'
 import { db } from "../../db/db";
+import { books } from "../../db/schema";
 
 export const getAllBooks = async (c: Context) => {
-    const allBooks = await db.select().from(books);
-    return c.json(allBooks);
+  const allBooks = await db.select().from(books);
+  return c.json(allBooks);
 }
 
 export const getBookByISBN = async (c: Context) => {
