@@ -19,8 +19,7 @@ export const getUserLibrary = async (c: Context) => {
     }
   });
 
-  if (!userLibrary) return c.json({ message: "No library found for this user" }, 404);
-  return c.json(userLibrary);
+  return c.json(userLibrary || null);
 }
 
 export const addBookToLibrary = async (c: Context) => {
